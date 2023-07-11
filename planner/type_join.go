@@ -254,12 +254,12 @@ func (p *Planner) makeTypeJoinOne(
 	// check if the field we're querying is the primary side of the relation
 	isPrimary := subTypeFieldDesc.RelationType.IsSet(client.Relation_Type_Primary)
 
-	subTypeCollectionDesc, err := p.getCollectionDesc(subType.CollectionName)
+	subTypeCol, err := p.db.GetCollectionByName(p.ctx, subType.CollectionName)
 	if err != nil {
 		return nil, err
 	}
 
-	subTypeField, subTypeFieldNameFound := subTypeCollectionDesc.GetRelation(subTypeFieldDesc.RelationName)
+	subTypeField, subTypeFieldNameFound := subTypeCol.Description().GetRelation(subTypeFieldDesc.RelationName)
 	if !subTypeFieldNameFound {
 		return nil, client.NewErrFieldNotExist(subTypeFieldDesc.RelationName)
 	}
@@ -476,12 +476,12 @@ func (p *Planner) makeTypeJoinMany(
 		return nil, client.NewErrFieldNotExist(subType.Name)
 	}
 
-	subTypeCollectionDesc, err := p.getCollectionDesc(subType.CollectionName)
+	subTypeCol, err := p.db.GetCollectionByName(p.ctx, subType.CollectionName)
 	if err != nil {
 		return nil, err
 	}
 
-	rootField, rootNameFound := subTypeCollectionDesc.GetRelation(subTypeFieldDesc.RelationName)
+	rootField, rootNameFound := subTypeCol.Description().GetRelation(subTypeFieldDesc.RelationName)
 	if !rootNameFound {
 		return nil, client.NewErrFieldNotExist(subTypeFieldDesc.RelationName)
 	}
