@@ -22,6 +22,7 @@ import (
 	httpapi "github.com/sourcenetwork/defradb/api/http"
 	"github.com/sourcenetwork/defradb/client"
 	"github.com/sourcenetwork/defradb/config"
+	"github.com/sourcenetwork/defradb/errors"
 	"github.com/sourcenetwork/defradb/logging"
 )
 
@@ -74,7 +75,11 @@ Example: show all index for 'Users' collection:
 
 			response, err := io.ReadAll(res.Body)
 			if err != nil {
-				return NewErrFailedToReadResponseBody(err)
+				err = NewErrFailedToReadResponseBody(err)
+				if closeErr := res.Body.Close(); closeErr != nil {
+					err = errors.Wrap(err.Error(), NewErrFailedToCloseResponseBody(err))
+				}
+				return err
 			}
 
 			stdout, err := os.Stdout.Stat()
