@@ -22,7 +22,6 @@ import (
 	httpapi "github.com/sourcenetwork/defradb/api/http"
 	"github.com/sourcenetwork/defradb/client"
 	"github.com/sourcenetwork/defradb/config"
-	"github.com/sourcenetwork/defradb/errors"
 	"github.com/sourcenetwork/defradb/logging"
 )
 
@@ -91,11 +90,7 @@ Example: create a named index for 'Users' collection on 'name' field:
 
 			response, err := io.ReadAll(res.Body)
 			if err != nil {
-				err = NewErrFailedToReadResponseBody(err)
-				if closeErr := res.Body.Close(); closeErr != nil {
-					err = errors.Wrap(err.Error(), NewErrFailedToCloseResponseBody(err))
-				}
-				return err
+				return NewErrFailedToReadResponseBody(err)
 			}
 
 			stdout, err := os.Stdout.Stat()
