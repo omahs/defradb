@@ -315,6 +315,7 @@ func ExecuteTestCase(
 	t *testing.T,
 	testCase TestCase,
 ) {
+	flattenActions(&testCase)
 	collectionNames := getCollectionNames(testCase)
 
 	if DetectDbChanges && DetectDbChangesPreTestChecks(t, collectionNames) {
@@ -365,7 +366,6 @@ func executeTestCase(
 ) {
 	log.Info(ctx, testCase.Description, logging.NewKV("Database", dbt))
 
-	flattenActions(&testCase)
 	startActionIndex, endActionIndex := getActionRange(testCase)
 
 	s := newState(ctx, t, testCase, dbt, clientType, collectionNames)
